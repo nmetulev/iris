@@ -7,8 +7,8 @@
     <ProjectGuid>{890B7971-CC47-46DD-BBCF-87AEE7518DF3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EventHub_Sender</RootNamespace>
-    <AssemblyName>EventHub_Sender</AssemblyName>
+    <RootNamespace>EventHub_Receiver</RootNamespace>
+    <AssemblyName>EventHub_Receiver</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

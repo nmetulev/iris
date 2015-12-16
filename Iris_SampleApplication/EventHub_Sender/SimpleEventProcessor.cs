@@ -43,12 +43,13 @@ namespace EventHub_Receiver
                     context.Lease.PartitionId, data));
             }
 
+            await context.CheckpointAsync();
+
             //Call checkpoint every 5 minutes, so that worker can resume processing from 5 minutes back if it restarts.
-            if (this.checkpointStopWatch.Elapsed > TimeSpan.FromMinutes(5))
-            {
-                await context.CheckpointAsync();
-                this.checkpointStopWatch.Restart();
-            }
+            //if (this.checkpointStopWatch.Elapsed > TimeSpan.FromMinutes(5))
+            //{
+            //}
+            //this.checkpointStopWatch.Restart();
         }
     }
 }

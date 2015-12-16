@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using System.Threading;
 using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
 
 namespace EventHub_ConsoleSender
 {
@@ -27,13 +28,16 @@ namespace EventHub_ConsoleSender
         static void SendingRandomMessages()
         {
             var eventHubClient = EventHubClient.CreateFromConnectionString(connectionString, eventHubName);
-            while (true)
+            for (int i =0; i<100; i++)
             {
                 try
                 {
-                    var message = Guid.NewGuid().ToString();
-                    Console.WriteLine("{0} > Sending message: {1}", DateTime.Now, message);
-                    eventHubClient.Send(new EventData(Encoding.UTF8.GetBytes(message)));
+                    var dto = new DTOLib.IrisMessage("yes", 0.0);
+                    var json = JsonConvert.SerializeObject(dto);
+                    var msg = Encoding.UTF8.GetBytes(json);
+                    Console.WriteLine("{0} > Sending message: {1} as Json: {2}", DateTime.Now, msg, json);
+                    
+                    eventHubClient.Send(new EventData(msg));
                 }
                 catch (Exception exception)
                 {

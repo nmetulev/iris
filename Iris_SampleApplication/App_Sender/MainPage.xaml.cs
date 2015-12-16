@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
+using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -44,17 +46,23 @@ namespace App_Sender
             int randomValue = ran.Next(1, 100);
             double val = 1.0 / randomValue;
 
-            var success = (val > 0.5) ? true : false;
+            var success = (val > 0.5) ? "yes" : "no";
             var prob = val;
 
             // create Iris message
             var msg = new IrisMessage(success  , prob);
             
-            // serialize
-            var jsonMsg = JsonConvert.SerializeObject(msg);
 
             // send
-            await myQueueClient.SendAsync(jsonMsg);                        
+            //Message m = new Message(msg);
+            var jsonMsg = JsonConvert.SerializeObject(msg);
+            // await myQueueClient.SendAsync(jsonMsg);
+
+            JsonObject jo = new JsonObject();
+
+            JsonObject.TryParse(jsonMsg, out jo);
+            // serialize
+            await myQueueClient.SendAsync(jo);                        
 
         }
 
