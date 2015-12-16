@@ -16,6 +16,7 @@ using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
+using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -54,7 +55,8 @@ namespace iris_pi
         private MediaCapture _mediaCapture;
         private bool _isInitialized;
         private bool _isPreviewing;
-        private bool _isRecording;
+
+        private FaceDetectionEffect _faceDetectionEffect;
 
         // Information about the camera device
         private bool _mirroringPreview;
@@ -62,6 +64,8 @@ namespace iris_pi
 
         private EmotionServiceClient _emotionClient;
         private FaceServiceClient _faceClient;
+
+        private bool _analyzing = false;
 
         private string _groupName = "949fd5e0-0e26-4faf-9033-23f99ef423eb";
 
@@ -118,12 +122,7 @@ namespace iris_pi
 
         #region Event handlers
 
-
-        /// <summary>
-        /// Occurs each time the simple orientation sensor reports a new sensor reading.
-        /// </summary>
-        /// <param name="sender">The event source.</param>
-        /// <param name="args">The event data.</param>
+        
         private async void OrientationSensor_OrientationChanged(SimpleOrientationSensor sender, SimpleOrientationSensorOrientationChangedEventArgs args)
         {
             if (args.Orientation != SimpleOrientation.Faceup && args.Orientation != SimpleOrientation.Facedown)
@@ -138,12 +137,7 @@ namespace iris_pi
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateButtonOrientation());
             }
         }
-
-        /// <summary>
-        /// This event will fire when the page is rotated, when the DisplayInformation.AutoRotationPreferences value set in the SetupUiAsync() method cannot be not honored.
-        /// </summary>
-        /// <param name="sender">The event source.</param>
-        /// <param name="args">The event data.</param>
+        
         private async void DisplayInformation_OrientationChanged(DisplayInformation sender, object args)
         {
             _displayOrientation = sender.CurrentOrientation;
@@ -158,23 +152,9 @@ namespace iris_pi
 
         private async void PhotoButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            _analyzing = true;
             await TakePhotoAsync();
-        }
-
-        private async void MediaCapture_RecordLimitationExceeded(MediaCapture sender)
-        {
-            // This is a notification that recording has to stop, and the app is expected to finalize the recording
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateCaptureControls());
-        }
-
-        private async void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
-        {
-            Debug.WriteLine("MediaCapture_Failed: (0x{0:X}) {1}", errorEventArgs.Code, errorEventArgs.Message);
-
-            await CleanupCameraAsync();
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateCaptureControls());
+           // _analyzing = false;
         }
 
         #endregion Event handlers
@@ -203,53 +183,63 @@ namespace iris_pi
 
                 // Create MediaCapture and its settings
                 _mediaCapture = new MediaCapture();
-
-                // Register for a notification when video recording has reached the maximum time and when something goes wrong
-                _mediaCapture.RecordLimitationExceeded += MediaCapture_RecordLimitationExceeded;
-                _mediaCapture.Failed += MediaCapture_Failed;
-
-                var settings = new MediaCaptureInitializationSettings { VideoDeviceId = cameraDevice.Id };
+                var settings = new MediaCaptureInitializationSettings { VideoDeviceId = cameraDevice.Id, StreamingCaptureMode = StreamingCaptureMode.Video };
 
                 // Initialize MediaCapture
                 try
                 {
                     await _mediaCapture.InitializeAsync(settings);
                     _isInitialized = true;
+                    CaptureElement element = new CaptureElement();
+                    element.Source = _mediaCapture;
+                    await _mediaCapture.StartPreviewAsync();
+
+                    var definition = new FaceDetectionEffectDefinition();
+                    definition.SynchronousDetectionEnabled = false;
+                    definition.DetectionMode = FaceDetectionMode.HighPerformance;
+
+                    _faceDetectionEffect = (await _mediaCapture.AddVideoEffectAsync(definition, MediaStreamType.VideoPreview)) as FaceDetectionEffect;
+
+                    _faceDetectionEffect.DesiredDetectionInterval = TimeSpan.FromMilliseconds(100);
+                    _faceDetectionEffect.Enabled = true;
+
+                    _faceDetectionEffect.FaceDetected += FaceDetectionEffect_FaceDetected;
                 }
                 catch (UnauthorizedAccessException)
                 {
                     Debug.WriteLine("The app was denied access to the camera");
                 }
-
-                // If initialization succeeded, start the preview
-                if (_isInitialized)
-                {
-                    // Figure out where the camera is located
-                    if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
-                    {
-                        // No information on the location of the camera, assume it's an external camera, not integrated on the device
-                        _externalCamera = true;
-                    }
-                    else
-                    {
-                        // Camera is fixed on the device
-                        _externalCamera = false;
-
-                        // Only mirror the preview if the camera is on the front panel
-                        _mirroringPreview = (cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front);
-                    }
-
-                    //  await StartPreviewAsync();
-
-                    UpdateCaptureControls();
-                }
             }
         }
 
-        /// <summary>
-        /// Starts the preview and adjusts it for for rotation and mirroring after making a request to keep the screen on
-        /// </summary>
-        /// <returns></returns>
+        private bool _faceDetected = false;
+
+        private void FaceDetectionEffect_FaceDetected(FaceDetectionEffect sender, FaceDetectedEventArgs args)
+        {
+            if (args.ResultFrame.DetectedFaces.Count > 0 )
+            {
+                if (!_faceDetected && !_analyzing)
+                {
+                    _faceDetected = true;
+                    var frame = args.ResultFrame;
+                    var box = frame.DetectedFaces.First().FaceBox;
+                    Debug.WriteLine("Face Detected: Height: " + box.Height + " Width: " + box.Width);
+                    if (!_analyzing) TakePhotoAsync();
+                }
+                else
+                {
+                    Debug.WriteLine("Same Face Detected!");
+
+                }
+
+            }
+            else
+            {
+                Debug.WriteLine("No faces detected");
+                _faceDetected = false;
+            }
+        }
+
         private async Task StartPreviewAsync()
         {
             // Prevent the device from sleeping while the preview is running
@@ -269,10 +259,7 @@ namespace iris_pi
                 await SetPreviewRotationAsync();
             }
         }
-
-        /// <summary>
-        /// Gets the current orientation of the UI in relation to the device (when AutoRotationPreferences cannot be honored) and applies a corrective rotation to the preview
-        /// </summary>
+        
         private async Task SetPreviewRotationAsync()
         {
             // Only need to update the orientation if the camera is mounted on the device
@@ -282,21 +269,14 @@ namespace iris_pi
             int rotationDegrees = ConvertDisplayOrientationToDegrees(_displayOrientation);
 
             // The rotation direction needs to be inverted if the preview is being mirrored
-            if (_mirroringPreview)
-            {
-                rotationDegrees = (360 - rotationDegrees) % 360;
-            }
+            rotationDegrees = (360 - rotationDegrees) % 360;
 
             // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
             var props = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
             props.Properties.Add(RotationKey, rotationDegrees);
             await _mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
         }
-
-        /// <summary>
-        /// Stops the preview and deactivates a display request, to allow the screen to go into power saving modes
-        /// </summary>
-        /// <returns></returns>
+        
         private async Task StopPreviewAsync()
         {
             // Stop the preview
@@ -329,11 +309,14 @@ namespace iris_pi
                 await _mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
                 Debug.WriteLine("Photo taken!");
 
-                var photoOrientation = ConvertOrientationToPhotoOrientation(GetCameraOrientation());
 
-                Status.Text = "Photo taken!";
+                await Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    var photoOrientation = ConvertOrientationToPhotoOrientation(GetCameraOrientation());
+                    await ReencodeAndAnalyze(stream, photoOrientation);
+                });
 
-                await ReencodeAndAnalyze(stream, photoOrientation);
+                
             }
             catch (Exception ex)
             {
@@ -365,8 +348,6 @@ namespace iris_pi
 
             if (_mediaCapture != null)
             {
-                _mediaCapture.RecordLimitationExceeded -= MediaCapture_RecordLimitationExceeded;
-                _mediaCapture.Failed -= MediaCapture_Failed;
                 _mediaCapture.Dispose();
                 _mediaCapture = null;
             }
@@ -407,25 +388,7 @@ namespace iris_pi
             // Revert orientation preferences
             DisplayInformation.AutoRotationPreferences = DisplayOrientations.None;
         }
-
-        /// <summary>
-        /// This method will update the icons, enable/disable and show/hide the photo/video buttons depending on the current state of the app and the capabilities of the device
-        /// </summary>
-        private void UpdateCaptureControls()
-        {
-            // The buttons should only be enabled if the preview started sucessfully
-            //  PhotoButton.IsEnabled = _isPreviewing;
-
-            // If the camera doesn't support simultaneosly taking pictures and recording video, disable the photo button on record
-            if (_isInitialized && !_mediaCapture.MediaCaptureSettings.ConcurrentRecordAndPhotoSupported)
-            {
-                PhotoButton.IsEnabled = !_isRecording;
-
-                // Make the button invisible if it's disabled, so it's obvious it cannot be interacted with
-                PhotoButton.Opacity = PhotoButton.IsEnabled ? 1 : 0;
-            }
-        }
-
+        
         /// <summary>
         /// Registers event handlers for hardware buttons and orientation sensors, and performs an initial update of the UI rotation
         /// </summary>
