@@ -8,6 +8,16 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <CaptureElement Name="PreviewControl" Stretch="Uniform"/>
+        <TextBlock Name="Status" ></TextBlock>
 
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20" RequestedTheme="Dark">
+            <Button Name="PhotoButton" Tapped="PhotoButton_Tapped" IsEnabled="True" Background="Transparent" RequestedTheme="Light">
+                <Viewbox MaxHeight="40" MaxWidth="40">
+                    <SymbolIcon Symbol="Camera"/>
+                </Viewbox>
+            </Button>
+
+        </StackPanel>
     </Grid>
 </Page>

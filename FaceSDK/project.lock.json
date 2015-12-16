@@ -14645,7 +14645,8 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0"
+      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
+      "Newtonsoft.Json >= 8.0.1-beta3"
     ],
     "UAP,Version=v10.0": []
   }
