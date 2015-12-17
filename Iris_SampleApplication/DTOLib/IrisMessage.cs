@@ -9,6 +9,7 @@ namespace DTOLib
     public class IrisMessage
     {
         public string Success { get; set; }
+        public int DoorID { get; set; }
         public double Probability { get; set; }
         public double Anger { get; set; }
         public double Contempt { get; set; }
@@ -22,11 +23,12 @@ namespace DTOLib
         public double Noise { get; set; }
         public double Brightness { get; set; }
         public double Humidity { get; set; }
+        public DateTime DoorOpenTimeStamp { get; set; }
 
         public IrisMessage(
-            string success = "no"
-            , 
+            string success = "no", 
             double prob = 0.0,
+            int doorid=0,
             double anger = 0.0,
             double contempt = 0.0,
             double disgust = 0.0,
@@ -39,22 +41,26 @@ namespace DTOLib
             double noise = 0.0,
             double brightness = 0.0,
             double humidity = 0.0
+            
+            
             )
         {
             this.Success = success;
-            //this.Probability = prob;
-            //this.Anger = anger;
-            //this.Contempt = contempt;
-            //this.Disgust = disgust;
-            //this.Fear = fear;
-            //this.Happiness = happiness;
-            //this.Neutral = neutral;
-            //this.Sadness = sadness;
-            //this.Surprise = surprise;
-            //this.Temperature = temperature;
-            //this.Noise = noise;
-            //this.Brightness = brightness;
-            //this.Humidity = humidity;
+            this.DoorID = doorid;
+            this.Probability = prob;
+            this.Anger = anger;
+            this.Contempt = contempt;
+            this.Disgust = disgust;
+            this.Fear = fear;
+            this.Happiness = happiness;
+            this.Neutral = neutral;
+            this.Sadness = sadness;
+            this.Surprise = surprise;
+            this.Temperature = temperature;
+            this.Noise = noise;
+            this.Brightness = brightness;
+            this.Humidity = humidity;
+            this.DoorOpenTimeStamp = DateTime.Now;
         }
     }
 }

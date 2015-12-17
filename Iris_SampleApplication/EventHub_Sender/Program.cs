@@ -21,7 +21,7 @@ namespace EventHub_Receiver
             string storageConnectionString = string.Format("DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}", storageAccountName, storageAccountKey);
 
             string eventProcessorHostName = Guid.NewGuid().ToString();
-            EventProcessorHost eventProcessorHost = new EventProcessorHost(eventProcessorHostName, eventHubName, EventHubConsumerGroup.DefaultGroupName, eventHubConnectionString, storageConnectionString);
+            EventProcessorHost eventProcessorHost = new EventProcessorHost(eventProcessorHostName, eventHubName, "parisirisconsoleconsumergroup1", eventHubConnectionString, storageConnectionString);
             Console.WriteLine("Registering EventProcessor...");
             eventProcessorHost.RegisterEventProcessorAsync<SimpleEventProcessor>().Wait();
 

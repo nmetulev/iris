@@ -1,8 +1,7 @@
 ﻿{
   "dependencies": {
-    "GHIElectronics.UWP.Shields.FEZHAT": "0.0.8",
+    "AzureSBLite": "1.3.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
-    "Newtonsoft.Json": "8.0.1-beta3",
     "WindowsAzure.Messaging.Managed": "0.1.7.9"
   },
   "frameworks": {

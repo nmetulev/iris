@@ -3,23 +3,35 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -218,14 +230,6 @@
         },
         "runtime": {
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
-        }
-      },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "System.AppContext/4.0.0": {
@@ -1562,34 +1566,38 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -1831,14 +1839,6 @@
         },
         "runtime": {
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
-        }
-      },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "System.AppContext/4.0.0": {
@@ -3222,34 +3222,38 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -3477,14 +3481,6 @@
         },
         "runtime": {
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
-        }
-      },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "System.AppContext/4.0.0": {
@@ -4854,34 +4850,38 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x64": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -5130,14 +5130,6 @@
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        }
-      },
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -6519,34 +6511,38 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -6774,14 +6770,6 @@
         },
         "runtime": {
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
-        }
-      },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "System.AppContext/4.0.0": {
@@ -8151,34 +8139,38 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x86": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -8427,14 +8419,6 @@
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        }
-      },
       "System.AppContext/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.0, )",
@@ -9816,34 +9800,38 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
-      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "Microsoft.ApplicationInsights/1.0.0": {
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
         }
       },
-      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
         "dependencies": {
-          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+          "Microsoft.ApplicationInsights": "[1.0.0, )"
         },
         "compile": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
         },
         "runtime": {
-          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
+        }
+      },
+      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+        "dependencies": {
+          "Microsoft.ApplicationInsights": "[1.0.0, )",
+          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
+        },
+        "compile": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
+        },
+        "runtime": {
+          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
         }
       },
       "Microsoft.CSharp/4.0.0": {
@@ -10071,14 +10059,6 @@
         },
         "runtime": {
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
-        }
-      },
-      "Newtonsoft.Json/8.0.1-beta3": {
-        "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "System.AppContext/4.0.0": {
@@ -11448,40 +11428,58 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "WindowsAzure.Messaging.Managed/0.1.7.9": {
-        "compile": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        },
-        "runtime": {
-          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
-        }
       }
     }
   },
   "libraries": {
-    "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
-      "sha512": "FvVU154icITbJFcE9+4tWGOGy4yBxhoLpgrDsmaQYsm8nnjAVnJT3xVUBCiCJUfXFVKUsGT6XcbklCBNHnja6Q==",
+    "Microsoft.ApplicationInsights/1.0.0": {
+      "sha512": "HZ47/thX57SOuIivSvIbsR6L9CCb/Yt3IyB2i4KHmmNlf3DO+lqFwWIKDdbDNWKX+qh0Rg20/JSMPK0dwUsYYw==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
         "_rels/.rels",
-        "content/Properties/GHIElectronics.UWP.LowLevelDrivers.rd.xml",
-        "GHIElectronics.UWP.LowLevelDrivers.nuspec",
-        "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll",
-        "package/services/metadata/core-properties/6fcc664515c2460295e4f881490d77d5.psmdcp"
+        "lib/net40/Microsoft.ApplicationInsights.dll",
+        "lib/net40/Microsoft.ApplicationInsights.XML",
+        "lib/net45/Microsoft.ApplicationInsights.dll",
+        "lib/net45/Microsoft.ApplicationInsights.XML",
+        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll",
+        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.XML",
+        "lib/wp8/Microsoft.ApplicationInsights.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.XML",
+        "Microsoft.ApplicationInsights.nuspec",
+        "package/services/metadata/core-properties/b9e7bc7ab2454491af07046165ff01d0.psmdcp"
       ]
     },
-    "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
-      "sha512": "slzf4YHFp5gCgGhjLvyB/BLT/MBJKb1NqWz8mZCe5fYomAu5COJDQS4NO0wPSHcDFnfMAsmdSpnf1WlcaaMNig==",
+    "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
+      "sha512": "0qQXC+CtbyF2RPuld5pF74fxsnP6ml0LUnzQ6GL9AXXY64LPsLDsPUAymoUffo7LZvPDppZboTYX59TfVxKA7A==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
         "_rels/.rels",
-        "content/Properties/GHIElectronics.UWP.Shields.FEZHAT.rd.xml",
-        "GHIElectronics.UWP.Shields.FEZHAT.nuspec",
-        "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll",
-        "package/services/metadata/core-properties/fa7aee89d7f14cde98e8d46308b50778.psmdcp"
+        "lib/net40/Microsoft.ApplicationInsights.PersistenceChannel.dll",
+        "lib/net40/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "lib/portable-win8+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.PersistenceChannel.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.PersistenceChannel.XML",
+        "Microsoft.ApplicationInsights.PersistenceChannel.nuspec",
+        "package/services/metadata/core-properties/dc9ebba80e7343fdbd0a39a3cdeb672c.psmdcp"
+      ]
+    },
+    "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
+      "sha512": "fNCAjIwvbTV+G0dT14bgM5tptsqeSaKQaCrlq7QknOq1Xdm8ZmgsDYddMgXkvykyKLjWyU6fKuOpj6fsQJy+wQ==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
+        "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
+        "lib/wp8/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
+        "lib/wp8/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
+        "lib/wpa81/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
+        "lib/wpa81/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
+        "Microsoft.ApplicationInsights.WindowsApps.nuspec",
+        "package/services/metadata/core-properties/4f6f732debe548beaa1183418e8d65cc.psmdcp"
       ]
     },
     "Microsoft.CSharp/4.0.0": {
@@ -12135,29 +12133,6 @@
         "ref/net46/Microsoft.Win32.Primitives.dll",
         "ref/xamarinios10/_._",
         "ref/xamarinmac20/_._"
-      ]
-    },
-    "Newtonsoft.Json/8.0.1-beta3": {
-      "sha512": "fTozGxIUbseQrW3qXJcM5mDj/uenSJYu3WfwTsgc0alG8FqXwG5TY9aQLag+9Gt2bFtt/Y2e0Yy8J4p1fGtc9Q==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "lib/net20/Newtonsoft.Json.dll",
-        "lib/net20/Newtonsoft.Json.xml",
-        "lib/net35/Newtonsoft.Json.dll",
-        "lib/net35/Newtonsoft.Json.xml",
-        "lib/net40/Newtonsoft.Json.dll",
-        "lib/net40/Newtonsoft.Json.xml",
-        "lib/net45/Newtonsoft.Json.dll",
-        "lib/net45/Newtonsoft.Json.xml",
-        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
-        "Newtonsoft.Json.nuspec",
-        "package/services/metadata/core-properties/0f33e9ae0a294415849bc6d6b22dcb34.psmdcp",
-        "tools/install.ps1"
       ]
     },
     "System.AppContext/4.0.0": {
@@ -14854,29 +14829,14 @@
         "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll",
         "System.Xml.XmlSerializer.nuspec"
       ]
-    },
-    "WindowsAzure.Messaging.Managed/0.1.7.9": {
-      "sha512": "9g7MVL7Odl5qwG9TSsaab/MKFXdeLitrvbbRAO7xWk4CGeD1j17GPeUsuufO8VY5+GAcCQjJcrM6fU+y/eLCBg==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll",
-        "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.pri",
-        "lib/windowsphone8/Microsoft.WindowsAzure.Messaging.dll",
-        "lib/wpa81/Microsoft.WindowsAzure.Messaging.Managed.dll",
-        "lib/wpa81/Microsoft.WindowsAzure.Messaging.Managed.pri",
-        "package/services/metadata/core-properties/569168c4f5e84989be94f8996f8e2485.psmdcp",
-        "WindowsAzure.Messaging.Managed.nuspec"
-      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "GHIElectronics.UWP.Shields.FEZHAT >= 0.0.8",
-      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
-      "Newtonsoft.Json >= 8.0.1-beta3",
-      "WindowsAzure.Messaging.Managed >= 0.1.7.9"
+      "Microsoft.ApplicationInsights >= 1.0.0",
+      "Microsoft.ApplicationInsights.PersistenceChannel >= 1.0.0",
+      "Microsoft.ApplicationInsights.WindowsApps >= 1.0.0",
+      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0"
     ],
     "UAP,Version=v10.0": []
   }
