@@ -66,6 +66,8 @@ namespace iris_pi
         private FaceServiceClient _faceClient;
 
         private bool _analyzing = false;
+        private bool _faceDetected = false;
+
 
         private string _groupName = "949fd5e0-0e26-4faf-9033-23f99ef423eb";
 
@@ -127,14 +129,7 @@ namespace iris_pi
         {
             if (args.Orientation != SimpleOrientation.Faceup && args.Orientation != SimpleOrientation.Facedown)
             {
-                // Only update the current orientation if the device is not parallel to the ground. This allows users to take pictures of documents (FaceUp)
-                // or the ceiling (FaceDown) in portrait or landscape, by first holding the device in the desired orientation, and then pointing the camera
-                // either up or down, at the desired subject.
-                //Note: This assumes that the camera is either facing the same way as the screen, or the opposite way. For devices with cameras mounted
-                //      on other panels, this logic should be adjusted.
                 _deviceOrientation = args.Orientation;
-
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateButtonOrientation());
             }
         }
         
@@ -146,26 +141,46 @@ namespace iris_pi
             {
                 await SetPreviewRotationAsync();
             }
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateButtonOrientation());
         }
 
-        private async void PhotoButton_Tapped(object sender, TappedRoutedEventArgs e)
+        //private async void PhotoButton_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    _analyzing = true;
+        //    await TakePhotoAndAnalyzeAsync();
+        //   // _analyzing = false;
+        //}
+
+        private void FaceDetectionEffect_FaceDetected(FaceDetectionEffect sender, FaceDetectedEventArgs args)
         {
-            _analyzing = true;
-            await TakePhotoAsync();
-           // _analyzing = false;
+            if (args.ResultFrame.DetectedFaces.Count > 0)
+            {
+                if (!_faceDetected && !_analyzing)
+                {
+                    _faceDetected = true;
+                    var frame = args.ResultFrame;
+                    var box = frame.DetectedFaces.First().FaceBox;
+                    Debug.WriteLine("Face Detected: Height: " + box.Height + " Width: " + box.Width);
+                    if (!_analyzing) TakePhotoAndAnalyzeAsync();
+                }
+                else
+                {
+                    Debug.WriteLine("Same Face Detected!");
+
+                }
+
+            }
+            else
+            {
+                Debug.WriteLine("No faces detected");
+                _faceDetected = false;
+            }
         }
 
         #endregion Event handlers
 
 
         #region MediaCapture methods
-
-        /// <summary>
-        /// Initializes the MediaCapture, registers events, gets camera device information for mirroring and rotating, starts preview and unlocks the UI
-        /// </summary>
-        /// <returns></returns>
+        
         private async Task InitializeCameraAsync()
         {
             Debug.WriteLine("InitializeCameraAsync");
@@ -211,54 +226,6 @@ namespace iris_pi
                 }
             }
         }
-
-        private bool _faceDetected = false;
-
-        private void FaceDetectionEffect_FaceDetected(FaceDetectionEffect sender, FaceDetectedEventArgs args)
-        {
-            if (args.ResultFrame.DetectedFaces.Count > 0 )
-            {
-                if (!_faceDetected && !_analyzing)
-                {
-                    _faceDetected = true;
-                    var frame = args.ResultFrame;
-                    var box = frame.DetectedFaces.First().FaceBox;
-                    Debug.WriteLine("Face Detected: Height: " + box.Height + " Width: " + box.Width);
-                    if (!_analyzing) TakePhotoAsync();
-                }
-                else
-                {
-                    Debug.WriteLine("Same Face Detected!");
-
-                }
-
-            }
-            else
-            {
-                Debug.WriteLine("No faces detected");
-                _faceDetected = false;
-            }
-        }
-
-        private async Task StartPreviewAsync()
-        {
-            // Prevent the device from sleeping while the preview is running
-            _displayRequest.RequestActive();
-
-            // Set the preview source in the UI and mirror it if necessary
-            //  PreviewControl.Source = _mediaCapture;
-            //  PreviewControl.FlowDirection = _mirroringPreview ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-
-            // Start the preview
-            await _mediaCapture.StartPreviewAsync();
-            _isPreviewing = true;
-
-            // Initialize the preview to the current orientation
-            if (_isPreviewing)
-            {
-                await SetPreviewRotationAsync();
-            }
-        }
         
         private async Task SetPreviewRotationAsync()
         {
@@ -293,14 +260,10 @@ namespace iris_pi
                 _displayRequest.RequestRelease();
             });
         }
-
-        /// <summary>
-        /// Takes a photo to a StorageFile and adds rotation metadata to it
-        /// </summary>
-        /// <returns></returns>
-        private async Task TakePhotoAsync()
+        
+        private async Task TakePhotoAndAnalyzeAsync()
         {
-
+            _analyzing = true;
             var stream = new InMemoryRandomAccessStream();
 
             try
@@ -310,25 +273,21 @@ namespace iris_pi
                 Debug.WriteLine("Photo taken!");
 
 
-                await Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                bool success = await ReencodeAndAnalyze(stream);
+                if (!success)
                 {
-                    var photoOrientation = ConvertOrientationToPhotoOrientation(GetCameraOrientation());
-                    await ReencodeAndAnalyze(stream, photoOrientation);
-                });
-
-                
+                    success = await ReencodeAndAnalyze(stream);
+                }
             }
             catch (Exception ex)
             {
                 // File I/O errors are reported as exceptions
                 Debug.WriteLine("Exception when taking a photo: {0}", ex.ToString());
             }
-        }
 
-        /// <summary>
-        /// Cleans up the camera resources (after stopping any video recording and/or preview if necessary) and unregisters from MediaCapture events
-        /// </summary>
-        /// <returns></returns>
+            _analyzing = false;
+        }
+        
         private async Task CleanupCameraAsync()
         {
             Debug.WriteLine("CleanupCameraAsync");
@@ -357,6 +316,22 @@ namespace iris_pi
 
 
         #region Helper functions
+
+        private void SetStatus(string text)
+        {
+            Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Status.Text = text;
+            });
+        }
+
+        private void AppendStatus(string text)
+        {
+            Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Status.Text += text;
+            });
+        }
 
         /// <summary>
         /// Attempts to lock the page orientation, hide the StatusBar (on Phone) and registers event handlers for hardware buttons and orientation sensors
@@ -398,9 +373,7 @@ namespace iris_pi
             if (_orientationSensor != null)
             {
                 _orientationSensor.OrientationChanged += OrientationSensor_OrientationChanged;
-
-                // Update orientation of buttons with the current orientation
-                UpdateButtonOrientation();
+                
             }
 
             _displayInformation.OrientationChanged += DisplayInformation_OrientationChanged;
@@ -418,12 +391,7 @@ namespace iris_pi
 
             _displayInformation.OrientationChanged -= DisplayInformation_OrientationChanged;
         }
-
-        /// <summary>
-        /// Attempts to find and return a device mounted on the panel specified, and on failure to find one it will return the first device listed
-        /// </summary>
-        /// <param name="desiredPanel">The desired panel on which the returned device should be mounted, if available</param>
-        /// <returns></returns>
+        
         private static async Task<DeviceInformation> FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel desiredPanel)
         {
             // Get available devices for capturing pictures
@@ -435,36 +403,25 @@ namespace iris_pi
             // If there is no device mounted on the desired panel, return the first device found
             return desiredDevice ?? allVideoDevices.FirstOrDefault();
         }
-
-        /// <summary>
-        /// Applies the given orientation to a photo stream and saves it as a StorageFile
-        /// </summary>
-        /// <param name="stream">The photo stream</param>
-        /// <param name="photoOrientation">The orientation metadata to apply to the photo</param>
-        /// <returns></returns>
-        private async Task ReencodeAndAnalyze(IRandomAccessStream stream, PhotoOrientation photoOrientation)
+        
+        private async Task<bool> ReencodeAndAnalyze(IRandomAccessStream stream)
         {
-            Status.Text = "Analyzing...";
+            bool success = false;
+            SetStatus("Analyzing...");
 
             using (var inputStream = stream)
             {
                 var decoder = await BitmapDecoder.CreateAsync(inputStream);
 
-                //var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("SimplePhoto.jpeg", CreationCollisionOption.ReplaceExisting);
-
                 using (var outputStream = new InMemoryRandomAccessStream())
                 {
                     var encoder = await BitmapEncoder.CreateForTranscodingAsync(outputStream, decoder);
 
-                    var properties = new BitmapPropertySet { { "System.Photo.Orientation", new BitmapTypedValue(photoOrientation, PropertyType.UInt16) } };
+                    var properties = new BitmapPropertySet { { "System.Photo.Orientation", new BitmapTypedValue(PhotoOrientation.Normal, PropertyType.UInt16) } };
 
                     await encoder.BitmapProperties.SetPropertiesAsync(properties);
                     await encoder.FlushAsync();
-
-
-                    //var emotionStream = outputStream.CloneStream().AsStream();
-                    //emotionStream.Seek(0, SeekOrigin.Begin);
-
+                    
                     var faceStream = outputStream.AsStream();
                     faceStream.Seek(0, SeekOrigin.Begin);
 
@@ -481,73 +438,78 @@ namespace iris_pi
 
                         if (identifyResult.Count() == 0 || identifyResult.First().Candidates.Count() == 0)
                         {
-                            Status.Text = "You are nobody";
+                            SetStatus("You are nobody");
                         }
                         else
                         {
                             var candidate = identifyResult.First().Candidates.First();
                             var person = await _faceClient.GetPersonAsync(_groupName, candidate.PersonId);
-                            Status.Text = "You are " + person.Name + "(" + candidate.Confidence + ")";
-
+                            SetStatus("You are " + person.Name + "(" + candidate.Confidence + ")");
+                            success = true;
                         }
 
-                        var result = await _emotionClient.RecognizeAsync(emotionStream);
-
-                        if (result.Count() > 0)
+                        if (success)
                         {
-                            var scores = result.First().Scores;
-                            var max = scores.Anger;
-                            string emotion = "Angry";
-                            if (scores.Contempt > max)
-                            {
-                                max = scores.Contempt;
-                                emotion = "Contempt";
-                            }
-                            if (scores.Disgust > max)
-                            {
-                                max = scores.Disgust;
-                                emotion = "Disgusted";
-                            }
-                            if (scores.Fear > max)
-                            {
-                                max = scores.Fear;
-                                emotion = "Scared";
-                            }
-                            if (scores.Happiness > max)
-                            {
-                                max = scores.Happiness;
-                                emotion = "Happy";
-                            }
-                            if (scores.Neutral > max)
-                            {
-                                max = scores.Neutral;
-                                emotion = "Neutral";
-                            }
-                            if (scores.Sadness > max)
-                            {
-                                max = scores.Sadness;
-                                emotion = "Sad";
-                            }
-                            if (scores.Surprise > max)
-                            {
-                                max = scores.Surprise;
-                                emotion = "Surprised";
-                            }
+                            var result = await _emotionClient.RecognizeAsync(emotionStream);
 
-                            Status.Text += " | You are " + emotion;
+                            if (result.Count() > 0)
+                            {
+                                var scores = result.First().Scores;
+                                var max = scores.Anger;
+                                string emotion = "Angry";
+                                if (scores.Contempt > max)
+                                {
+                                    max = scores.Contempt;
+                                    emotion = "Contempt";
+                                }
+                                if (scores.Disgust > max)
+                                {
+                                    max = scores.Disgust;
+                                    emotion = "Disgusted";
+                                }
+                                if (scores.Fear > max)
+                                {
+                                    max = scores.Fear;
+                                    emotion = "Scared";
+                                }
+                                if (scores.Happiness > max)
+                                {
+                                    max = scores.Happiness;
+                                    emotion = "Happy";
+                                }
+                                if (scores.Neutral > max)
+                                {
+                                    max = scores.Neutral;
+                                    emotion = "Neutral";
+                                }
+                                if (scores.Sadness > max)
+                                {
+                                    max = scores.Sadness;
+                                    emotion = "Sad";
+                                }
+                                if (scores.Surprise > max)
+                                {
+                                    max = scores.Surprise;
+                                    emotion = "Surprised";
+                                }
 
-                        }
-                        else
-                        {
-                            Status.Text += " | No emotion";
+                                AppendStatus(" | You are " + emotion);
+
+                            }
+                            else
+                            {
+                                AppendStatus(" | No emotion");
+                            }
                         }
                     }
                     else
                     {
-                        Status.Text = "No faces";
+                        SetStatus("No faces");
                     }
                 }
             }
+
+            return success;
         }
 
         #endregion Helper functions
@@ -647,51 +609,8 @@ namespace iris_pi
             }
         }
 
-        /// <summary>
-        /// Converts the given orientation of the device in space to the metadata that can be added to captured photos
-        /// </summary>
-        /// <param name="orientation">The orientation of the device in space</param>
-        /// <returns></returns>
-        private static PhotoOrientation ConvertOrientationToPhotoOrientation(SimpleOrientation orientation)
-        {
-            switch (orientation)
-            {
-                case SimpleOrientation.Rotated90DegreesCounterclockwise:
-                    return PhotoOrientation.Rotate90;
-                case SimpleOrientation.Rotated180DegreesCounterclockwise:
-                    return PhotoOrientation.Rotate180;
-                case SimpleOrientation.Rotated270DegreesCounterclockwise:
-                    return PhotoOrientation.Rotate270;
-                case SimpleOrientation.NotRotated:
-                default:
-                    return PhotoOrientation.Normal;
-            }
-        }
 
-        /// <summary>
-        /// Uses the current device orientation in space and page orientation on the screen to calculate the rotation
-        /// transformation to apply to the controls
-        /// </summary>
-        private void UpdateButtonOrientation()
-        {
-            int device = ConvertDeviceOrientationToDegrees(_deviceOrientation);
-            int display = ConvertDisplayOrientationToDegrees(_displayOrientation);
-
-            if (_displayInformation.NativeOrientation == DisplayOrientations.Portrait)
-            {
-                device -= 90;
-            }
-
-            // Combine both rotations and make sure that 0 <= result < 360
-            var angle = (360 + display + device) % 360;
-
-            // Rotate the buttons in the UI to match the rotation of the device
-            var transform = new RotateTransform { Angle = angle };
-
-            // The RenderTransform is safe to use (i.e. it won't cause layout issues) in this case, because these buttons have a 1:1 aspect ratio
-            PhotoButton.RenderTransform = transform;
-        }
-
+       
         #endregion Rotation helpers
     }
 }
