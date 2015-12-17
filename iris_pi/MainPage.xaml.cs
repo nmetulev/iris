@@ -241,6 +241,8 @@ namespace iris_pi
 
                 }
 
+                await Task.Delay(4000);
+
             }
             catch (Exception ex)
             {
@@ -467,7 +469,7 @@ namespace iris_pi
 
         private async Task InitFez()
         {
-            if (ApiInformation.IsTypePresent("Windows.Devices.Gpio"))
+            if (ApiInformation.IsTypePresent(typeof(Windows.Devices.Gpio.GpioController).ToString()))
             {
                 if (_fez == null)
                     _fez = await FEZHAT.CreateAsync();
@@ -485,29 +487,33 @@ namespace iris_pi
 
         private void BlinkLights(FEZHAT.Color color)
         {
-            if (_fez == null) return;
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            double time = 0;
-            bool red = false;
-            timer.Tick += (s, a) =>
+            var t = Root.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                time++;
-                if (time > 30)
-                {
-                    timer.Stop();
-                    _fez.D2.TurnOff();
-                    return;
-                }
+                if (_fez == null) return;
 
-                if (red)
-                    _fez.D2.Color = color;
-                else
-                red = !red;
-                
-            };
-            timer.Start();
+                timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromMilliseconds(100);
+                double time = 0;
+                bool red = false;
+                timer.Tick += (s, a) =>
+                {
+                    time++;
+                    if (time > 30)
+                    {
+                        timer.Stop();
+                        _fez.D2.TurnOff();
+                        return;
+                    }
+
+                    if (red)
+                        _fez.D2.Color = color;
+                    else
+                        red = !red;
+
+                };
+                timer.Start();
+            });
+            
         }
 
         private void SetLightsDenied()
