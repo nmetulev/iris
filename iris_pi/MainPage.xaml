@@ -7,16 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Name="Status" ></TextBlock>
+    <Grid x:Name="Root" Background="Black">
 
-        <!--<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20" RequestedTheme="Dark">
-            <Button Name="PhotoButton" Tapped="PhotoButton_Tapped" IsEnabled="True" Background="Transparent" RequestedTheme="Light">
-                <Viewbox MaxHeight="40" MaxWidth="40">
-                    <SymbolIcon Symbol="Camera"/>
-                </Viewbox>
-            </Button>
-
-        </StackPanel>-->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" RequestedTheme="Dark">
+            <TextBlock x:Name="MainText" FontSize="70" Text="Welcome!" HorizontalAlignment="Center"></TextBlock>
+            <TextBlock Margin="20" x:Name="SubtitleText" FontSize="30" Text="It's too early, I need few seconds before I can look at you..."></TextBlock>
+            <TextBlock Name="Status" ></TextBlock>
+        </StackPanel>
+        
     </Grid>
 </Page>

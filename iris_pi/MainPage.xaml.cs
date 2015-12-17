@@ -28,6 +28,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.System.Display;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -91,71 +92,18 @@ namespace iris_pi
             _faceClient = new FaceServiceClient(APIKey.Face);
             
         }
-
-        private async void Application_Suspending(object sender, SuspendingEventArgs e)
-        {
-            // Handle global application events only if this page is active
-            if (Frame.CurrentSourcePageType == typeof(MainPage))
-            {
-                var deferral = e.SuspendingOperation.GetDeferral();
-
-                await CleanupCameraAsync();
-
-                await CleanupUiAsync();
-
-                deferral.Complete();
-            }
-        }
-
-        private async void Application_Resuming(object sender, object o)
-        {
-            // Handle global application events only if this page is active
-            if (Frame.CurrentSourcePageType == typeof(MainPage))
-            {
-                await SetupUiAsync();
-
-                await InitializeCameraAsync();
-            }
-        }
-
+        
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            await SetupUiAsync();
-
             await InitializeCameraAsync();
+
+            await InitFez();
+
+            UpdateUI("Welcome!", "Do you have what it takes to enter?", Colors.Black, Colors.White);
         }
-
-        protected override async void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            // Handling of this event is included for completenes, as it will only fire when navigating between pages and this sample only includes one page
-
-            await CleanupCameraAsync();
-
-            await CleanupUiAsync();
-        }
-
 
 
         #region Event handlers
-
-        
-        private async void OrientationSensor_OrientationChanged(SimpleOrientationSensor sender, SimpleOrientationSensorOrientationChangedEventArgs args)
-        {
-            if (args.Orientation != SimpleOrientation.Faceup && args.Orientation != SimpleOrientation.Facedown)
-            {
-                _deviceOrientation = args.Orientation;
-            }
-        }
-        
-        private async void DisplayInformation_OrientationChanged(DisplayInformation sender, object args)
-        {
-            _displayOrientation = sender.CurrentOrientation;
-
-            if (_isPreviewing)
-            {
-                await SetPreviewRotationAsync();
-            }
-        }
 
         private void FaceDetectionEffect_FaceDetected(FaceDetectionEffect sender, FaceDetectedEventArgs args)
         {
@@ -170,7 +118,11 @@ namespace iris_pi
                     var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
                     var previewStream = previewProperties as VideoEncodingProperties;
 
-                    if (((double)box.Height / (double)previewStream.Height) < 0.5) SetStatus("Come Closer");
+                    if (((double)box.Height / (double)previewStream.Height) < 0.3)
+                    {
+                        UpdateUI("Hi there!", "Come closer so I can look at you better", Colors.LightGray, Colors.Black);
+                        //SetStatus("Come Closer");
+                    }
                     else
                     {
                         _faceDetected = true;
@@ -189,7 +141,7 @@ namespace iris_pi
             }
             else
             {
-                Debug.WriteLine("No faces detected");
+                UpdateUI("Welcome!", "Do you have what it takes to enter?", Colors.Black, Colors.White);
                 _faceDetected = false;
             }
         }
@@ -247,38 +199,11 @@ namespace iris_pi
             }
         }
         
-        private async Task SetPreviewRotationAsync()
-        {
-            // Only need to update the orientation if the camera is mounted on the device
-            if (_externalCamera) return;
-
-            // Calculate which way and how far to rotate the preview
-            int rotationDegrees = ConvertDisplayOrientationToDegrees(_displayOrientation);
-
-            // The rotation direction needs to be inverted if the preview is being mirrored
-            rotationDegrees = (360 - rotationDegrees) % 360;
-
-            // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
-            var props = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-            props.Properties.Add(RotationKey, rotationDegrees);
-            await _mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
-        }
-        
         private async Task StopPreviewAsync()
         {
             // Stop the preview
             _isPreviewing = false;
             await _mediaCapture.StopPreviewAsync();
-
-            // Use the dispatcher because this method is sometimes called from non-UI threads
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                // Cleanup the UI
-                PreviewControl.Source = null;
-
-                // Allow the device screen to sleep now that the preview is stopped
-                _displayRequest.RequestRelease();
-            });
         }
         
         private async Task TakePhotoAndAnalyzeAsync()
@@ -290,6 +215,9 @@ namespace iris_pi
             {
                 await _mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
 
+                UpdateUI("I got you now!", "Let me just see who you are...", Colors.LightGray, Colors.Black);
+
+
                 IrisMessage message = await ReencodeAndAnalyze(stream);
                 if (message.Success == "no")
                 {
@@ -299,6 +227,17 @@ namespace iris_pi
                 }
 
                 SendMessage(message);
+                if (message.Success == "yes")
+                {
+                    SetLightsAproved();
+                }
+                else
+                {
+                    SetLightsDenied();
+                    UpdateUI("Intruder, Intruder!", "You do not belong here, shoo...", Colors.Red, Colors.White);
+
+                }
+
             }
             catch (Exception ex)
             {
@@ -308,6 +247,7 @@ namespace iris_pi
             }
 
             _analyzing = false;
+
         }
         
         private async Task CleanupCameraAsync()
@@ -341,77 +281,30 @@ namespace iris_pi
 
         private void SetStatus(string text)
         {
-            Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Status.Text = text;
-            });
+            //Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //{
+            //    Status.Text = text;
+            //});
         }
 
         private void AppendStatus(string text)
         {
-            Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //Status.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //{
+            //    Status.Text += text;
+            //});
+        }
+
+        private void UpdateUI(string mainMessage, string subttitleMessage, Color backgroundColor, Color foregroundColor)
+        {
+            var t = Root.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Status.Text += text;
+                MainText.Text = mainMessage;
+                SubtitleText.Text = subttitleMessage;
+                Root.Background = new SolidColorBrush(backgroundColor);
+                MainText.Foreground = new SolidColorBrush(foregroundColor);
+                SubtitleText.Foreground = new SolidColorBrush(foregroundColor);
             });
-        }
-
-        /// <summary>
-        /// Attempts to lock the page orientation, hide the StatusBar (on Phone) and registers event handlers for hardware buttons and orientation sensors
-        /// </summary>
-        /// <returns></returns>
-        private async Task SetupUiAsync()
-        {
-            // Attempt to lock page to landscape orientation to prevent the CaptureElement from rotating, as this gives a better experience
-            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Landscape;
-
-            // Populate orientation variables with the current state
-            _displayOrientation = _displayInformation.CurrentOrientation;
-            if (_orientationSensor != null)
-            {
-                _deviceOrientation = _orientationSensor.GetCurrentOrientation();
-            }
-
-            RegisterEventHandlers();
-        }
-
-        /// <summary>
-        /// Unregisters event handlers for hardware buttons and orientation sensors, allows the StatusBar (on Phone) to show, and removes the page orientation lock
-        /// </summary>
-        /// <returns></returns>
-        private async Task CleanupUiAsync()
-        {
-            UnregisterEventHandlers();
-
-            // Revert orientation preferences
-            DisplayInformation.AutoRotationPreferences = DisplayOrientations.None;
-        }
-        
-        /// <summary>
-        /// Registers event handlers for hardware buttons and orientation sensors, and performs an initial update of the UI rotation
-        /// </summary>
-        private void RegisterEventHandlers()
-        {
-            // If there is an orientation sensor present on the device, register for notifications
-            if (_orientationSensor != null)
-            {
-                _orientationSensor.OrientationChanged += OrientationSensor_OrientationChanged;
-                
-            }
-
-            _displayInformation.OrientationChanged += DisplayInformation_OrientationChanged;
-        }
-
-        /// <summary>
-        /// Unregisters event handlers for hardware buttons and orientation sensors
-        /// </summary>
-        private void UnregisterEventHandlers()
-        {
-            if (_orientationSensor != null)
-            {
-                _orientationSensor.OrientationChanged -= OrientationSensor_OrientationChanged;
-            }
-
-            _displayInformation.OrientationChanged -= DisplayInformation_OrientationChanged;
         }
         
         private static async Task<DeviceInformation> FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel desiredPanel)
@@ -431,7 +324,7 @@ namespace iris_pi
             bool success = false;
             IrisMessage message = new IrisMessage();
             
-            SetStatus("Analyzing...");
+            //SetStatus("Analyzing...");
 
             using (var inputStream = stream)
             {
@@ -461,14 +354,17 @@ namespace iris_pi
                     {
                         var identifyResult = await _faceClient.IdentifyAsync(_groupName, faces.Select(ff => ff.FaceId).ToArray());
 
+                        Person person = null;
+
                         if (identifyResult.Count() == 0 || identifyResult.First().Candidates.Count() == 0)
                         {
-                            SetStatus("You are nobody");
+                           // SetStatus("You are nobody");
                         }
                         else
                         {
                             var candidate = identifyResult.First().Candidates.First();
-                            var person = await _faceClient.GetPersonAsync(_groupName, candidate.PersonId);
+                            person = await _faceClient.GetPersonAsync(_groupName, candidate.PersonId);
+
                             SetStatus("You are " + person.Name + "(" + candidate.Confidence + ")");
                             success = true;
 
@@ -531,11 +427,19 @@ namespace iris_pi
 
                             AppendStatus(" | You are " + emotion);
 
+                            if (success && person != null)
+                            {
+                                UpdateUI("Hey there " + person.Name + "!", "You are feeling pretty " + emotion, Colors.Green, Colors.White);
+
+                            }
+
                         }
                         else
                         {
                             AppendStatus(" | No emotion");
                         }
+
+                        
                         
                     }
                     else
@@ -553,115 +457,72 @@ namespace iris_pi
         #endregion Helper functions
 
 
-        #region Rotation helpers
-
-        /// <summary>
-        /// Calculates the current camera orientation from the device orientation by taking into account whether the camera is external or facing the user
-        /// </summary>
-        /// <returns>The camera orientation in space, with an inverted rotation in the case the camera is mounted on the device and is facing the user</returns>
-        private SimpleOrientation GetCameraOrientation()
-        {
-            if (_externalCamera)
-            {
-                // Cameras that are not attached to the device do not rotate along with it, so apply no rotation
-                return SimpleOrientation.NotRotated;
-            }
-
-            var result = _deviceOrientation;
-
-            // Account for the fact that, on portrait-first devices, the camera sensor is mounted at a 90 degree offset to the native orientation
-            if (_displayInformation.NativeOrientation == DisplayOrientations.Portrait)
-            {
-                switch (result)
-                {
-                    case SimpleOrientation.Rotated90DegreesCounterclockwise:
-                        result = SimpleOrientation.NotRotated;
-                        break;
-                    case SimpleOrientation.Rotated180DegreesCounterclockwise:
-                        result = SimpleOrientation.Rotated90DegreesCounterclockwise;
-                        break;
-                    case SimpleOrientation.Rotated270DegreesCounterclockwise:
-                        result = SimpleOrientation.Rotated180DegreesCounterclockwise;
-                        break;
-                    case SimpleOrientation.NotRotated:
-                        result = SimpleOrientation.Rotated270DegreesCounterclockwise;
-                        break;
-                }
-            }
-
-            // If the preview is being mirrored for a front-facing camera, then the rotation should be inverted
-            if (_mirroringPreview)
-            {
-                // This only affects the 90 and 270 degree cases, because rotating 0 and 180 degrees is the same clockwise and counter-clockwise
-                switch (result)
-                {
-                    case SimpleOrientation.Rotated90DegreesCounterclockwise:
-                        return SimpleOrientation.Rotated270DegreesCounterclockwise;
-                    case SimpleOrientation.Rotated270DegreesCounterclockwise:
-                        return SimpleOrientation.Rotated90DegreesCounterclockwise;
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Converts the given orientation of the device in space to the corresponding rotation in degrees
-        /// </summary>
-        /// <param name="orientation">The orientation of the device in space</param>
-        /// <returns>An orientation in degrees</returns>
-        private static int ConvertDeviceOrientationToDegrees(SimpleOrientation orientation)
-        {
-            switch (orientation)
-            {
-                case SimpleOrientation.Rotated90DegreesCounterclockwise:
-                    return 90;
-                case SimpleOrientation.Rotated180DegreesCounterclockwise:
-                    return 180;
-                case SimpleOrientation.Rotated270DegreesCounterclockwise:
-                    return 270;
-                case SimpleOrientation.NotRotated:
-                default:
-                    return 0;
-            }
-        }
-
-        /// <summary>
-        /// Converts the given orientation of the app on the screen to the corresponding rotation in degrees
-        /// </summary>
-        /// <param name="orientation">The orientation of the app on the screen</param>
-        /// <returns>An orientation in degrees</returns>
-        private static int ConvertDisplayOrientationToDegrees(DisplayOrientations orientation)
-        {
-            switch (orientation)
-            {
-                case DisplayOrientations.Portrait:
-                    return 90;
-                case DisplayOrientations.LandscapeFlipped:
-                    return 180;
-                case DisplayOrientations.PortraitFlipped:
-                    return 270;
-                case DisplayOrientations.Landscape:
-                default:
-                    return 0;
-            }
-        }
-
-
-
-        #endregion Rotation helpers
-
         #region sensors
 
-        private async Task PopulateMessageWithSensorData(IrisMessage message)
+        DispatcherTimer timer;
+
+        private async Task InitFez()
         {
-            if (ApiInformation.IsApiContractPresent("Windows.Devices.DevicesLowLevelContract", 1))
+            if (ApiInformation.IsTypePresent("Windows.Devices.Gpio"))
             {
                 if (_fez == null)
                     _fez = await FEZHAT.CreateAsync();
+            }
+        }
+
+        private async Task PopulateMessageWithSensorData(IrisMessage message)
+        {
+            if (_fez == null) return;
                 
-                message.Temperature = _fez.GetTemperature();
-                message.Brightness = _fez.GetLightLevel();
+            message.Temperature = _fez.GetTemperature();
+            message.Brightness = _fez.GetLightLevel();
+            //_fez.D2.Color = new FEZHAT.Color(255, 0, 0);
+        }
+
+        private void BlinkLights(FEZHAT.Color color)
+        {
+            if (_fez == null) return;
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+            double time = 0;
+            bool red = false;
+            timer.Tick += (s, a) =>
+            {
+                time++;
+                if (time > 30)
+                {
+                    timer.Stop();
+                    _fez.D2.TurnOff();
+                    return;
+                }
+
+                if (red)
+                    _fez.D2.Color = color;
+                else
+                red = !red;
+                
+            };
+            timer.Start();
+        }
+
+        private void SetLightsDenied()
+        {
+            BlinkLights(new FEZHAT.Color(255, 0, 0));
+        }
+
+        private void SetLightsAproved()
+        {
+
+            BlinkLights(new FEZHAT.Color(0, 255, 0));
+        }
+
+        private void DisposeTimer()
+        {
+            if (timer != null)
+            {
+                timer.Stop();
+                timer = null;
             }
         }
 
