@@ -23,6 +23,7 @@ namespace DTOLib
         public double Noise { get; set; }
         public double Brightness { get; set; }
         public double Humidity { get; set; }
+        public DateTime DoorOpenTimeStamp { get; set; }
 
         public IrisMessage(
             string success = "no", 
@@ -40,6 +41,8 @@ namespace DTOLib
             double noise = 0.0,
             double brightness = 0.0,
             double humidity = 0.0
+            
+            
             )
         {
             this.Success = success;
@@ -57,6 +60,7 @@ namespace DTOLib
             this.Noise = noise;
             this.Brightness = brightness;
             this.Humidity = humidity;
+            this.DoorOpenTimeStamp = DateTime.Now;
         }
     }
 }
