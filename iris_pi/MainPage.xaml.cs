@@ -1,6 +1,10 @@
-﻿using Microsoft.ProjectOxford.Emotion;
+﻿using DTOLib;
+using GHIElectronics.UWP.Shields;
+using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
+using Microsoft.WindowsAzure.Messaging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,10 +13,12 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Data.Json;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
@@ -68,14 +74,22 @@ namespace iris_pi
         private bool _analyzing = false;
         private bool _faceDetected = false;
 
+        private FEZHAT _fez;
+
 
         private string _groupName = "949fd5e0-0e26-4faf-9033-23f99ef423eb";
+
+        private string azureConnectionString = "Endpoint=sb://pragiriseventhub-ns.servicebus.windows.net/;SharedAccessKeyName=SendRule;SharedAccessKey=sYuB6HWiGf+CQOEpUOms3BCB0bsnH+Bn1iy9LWg0oLw=";
+        private Queue myQueueClient;
+        private string queueName = "pragiriseventhub";
+        Random ran = new Random();
 
         public MainPage()
         {
             this.InitializeComponent();
             _emotionClient = new EmotionServiceClient(APIKey.Emotion);
             _faceClient = new FaceServiceClient(APIKey.Face);
+            
         }
 
         private async void Application_Suspending(object sender, SuspendingEventArgs e)
@@ -143,24 +157,28 @@ namespace iris_pi
             }
         }
 
-        //private async void PhotoButton_Tapped(object sender, TappedRoutedEventArgs e)
-        //{
-        //    _analyzing = true;
-        //    await TakePhotoAndAnalyzeAsync();
-        //   // _analyzing = false;
-        //}
-
         private void FaceDetectionEffect_FaceDetected(FaceDetectionEffect sender, FaceDetectedEventArgs args)
         {
             if (args.ResultFrame.DetectedFaces.Count > 0)
             {
                 if (!_faceDetected && !_analyzing)
                 {
-                    _faceDetected = true;
+                    
                     var frame = args.ResultFrame;
                     var box = frame.DetectedFaces.First().FaceBox;
+
+                    var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+                    var previewStream = previewProperties as VideoEncodingProperties;
+
+                    if (((double)box.Height / (double)previewStream.Height) < 0.5) SetStatus("Come Closer");
+                    else
+                    {
+                        _faceDetected = true;
+                        if (!_analyzing) TakePhotoAndAnalyzeAsync();
+                    }
+                    
                     Debug.WriteLine("Face Detected: Height: " + box.Height + " Width: " + box.Width);
-                    if (!_analyzing) TakePhotoAndAnalyzeAsync();
+                    
                 }
                 else
                 {
@@ -208,6 +226,8 @@ namespace iris_pi
                     CaptureElement element = new CaptureElement();
                     element.Source = _mediaCapture;
                     await _mediaCapture.StartPreviewAsync();
+                    
+                    
 
                     var definition = new FaceDetectionEffectDefinition();
                     definition.SynchronousDetectionEnabled = false;
@@ -268,21 +288,23 @@ namespace iris_pi
 
             try
             {
-                Debug.WriteLine("Taking photo...");
                 await _mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
-                Debug.WriteLine("Photo taken!");
 
-
-                bool success = await ReencodeAndAnalyze(stream);
-                if (!success)
+                IrisMessage message = await ReencodeAndAnalyze(stream);
+                if (message.Success == "no")
                 {
-                    success = await ReencodeAndAnalyze(stream);
+                    stream = new InMemoryRandomAccessStream();
+                    await _mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
+                    message = await ReencodeAndAnalyze(stream);
                 }
+
+                SendMessage(message);
             }
             catch (Exception ex)
             {
                 // File I/O errors are reported as exceptions
-                Debug.WriteLine("Exception when taking a photo: {0}", ex.ToString());
+                Debug.WriteLine("Exception when taking a photo: " + ex.ToString());
+                SendMessage(new IrisMessage(success: "no"));
             }
 
             _analyzing = false;
@@ -404,9 +426,11 @@ namespace iris_pi
             return desiredDevice ?? allVideoDevices.FirstOrDefault();
         }
         
-        private async Task<bool> ReencodeAndAnalyze(IRandomAccessStream stream)
+        private async Task<IrisMessage> ReencodeAndAnalyze(IRandomAccessStream stream)
         {
             bool success = false;
+            IrisMessage message = new IrisMessage();
+            
             SetStatus("Analyzing...");
 
             using (var inputStream = stream)
@@ -431,6 +455,7 @@ namespace iris_pi
                     faceStream.Seek(0, SeekOrigin.Begin);
                     emotionStream.Seek(0, SeekOrigin.Begin);
 
+
                     var faces = await _faceClient.DetectAsync(faceStream);
                     if (faces.Count() > 0)
                     {
@@ -446,61 +471,72 @@ namespace iris_pi
                             var person = await _faceClient.GetPersonAsync(_groupName, candidate.PersonId);
                             SetStatus("You are " + person.Name + "(" + candidate.Confidence + ")");
                             success = true;
+
+                            message.Probability = candidate.Confidence;
                         }
 
-                        if (success)
+
+                        var result = await _emotionClient.RecognizeAsync(emotionStream);
+
+                        if (result.Count() > 0)
                         {
-                            var result = await _emotionClient.RecognizeAsync(emotionStream);
+                            var scores = result.First().Scores;
 
-                            if (result.Count() > 0)
+                            message.Anger = scores.Anger;
+                            message.Contempt = scores.Contempt;
+                            message.Disgust = scores.Disgust;
+                            message.Fear = scores.Fear;
+                            message.Happiness = scores.Happiness;
+                            message.Neutral = scores.Neutral;
+                            message.Sadness = scores.Sadness;
+                            message.Surprise = scores.Surprise;
+
+                            var max = scores.Anger;
+                            string emotion = "Angry";
+                            if (scores.Contempt > max)
                             {
-                                var scores = result.First().Scores;
-                                var max = scores.Anger;
-                                string emotion = "Angry";
-                                if (scores.Contempt > max)
-                                {
-                                    max = scores.Contempt;
-                                    emotion = "Contempt";
-                                }
-                                if (scores.Disgust > max)
-                                {
-                                    max = scores.Disgust;
-                                    emotion = "Disgusted";
-                                }
-                                if (scores.Fear > max)
-                                {
-                                    max = scores.Fear;
-                                    emotion = "Scared";
-                                }
-                                if (scores.Happiness > max)
-                                {
-                                    max = scores.Happiness;
-                                    emotion = "Happy";
-                                }
-                                if (scores.Neutral > max)
-                                {
-                                    max = scores.Neutral;
-                                    emotion = "Neutral";
-                                }
-                                if (scores.Sadness > max)
-                                {
-                                    max = scores.Sadness;
-                                    emotion = "Sad";
-                                }
-                                if (scores.Surprise > max)
-                                {
-                                    max = scores.Surprise;
-                                    emotion = "Surprised";
-                                }
-
-                                AppendStatus(" | You are " + emotion);
-
+                                max = scores.Contempt;
+                                emotion = "Contempt";
                             }
-                            else
+                            if (scores.Disgust > max)
                             {
-                                AppendStatus(" | No emotion");
+                                max = scores.Disgust;
+                                emotion = "Disgusted";
                             }
+                            if (scores.Fear > max)
+                            {
+                                max = scores.Fear;
+                                emotion = "Scared";
+                            }
+                            if (scores.Happiness > max)
+                            {
+                                max = scores.Happiness;
+                                emotion = "Happy";
+                            }
+                            if (scores.Neutral > max)
+                            {
+                                max = scores.Neutral;
+                                emotion = "Neutral";
+                            }
+                            if (scores.Sadness > max)
+                            {
+                                max = scores.Sadness;
+                                emotion = "Sad";
+                            }
+                            if (scores.Surprise > max)
+                            {
+                                max = scores.Surprise;
+                                emotion = "Surprised";
+                            }
+
+                            AppendStatus(" | You are " + emotion);
+
                         }
+                        else
+                        {
+                            AppendStatus(" | No emotion");
+                        }
+                        
                     }
                     else
                     {
@@ -509,7 +545,9 @@ namespace iris_pi
                 }
             }
 
-            return success;
+            await PopulateMessageWithSensorData(message);
+            message.Success = success ? "yes" : "no";
+            return message;
         }
 
         #endregion Helper functions
@@ -610,7 +648,46 @@ namespace iris_pi
         }
 
 
-       
+
         #endregion Rotation helpers
+
+        #region sensors
+
+        private async Task PopulateMessageWithSensorData(IrisMessage message)
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Devices.DevicesLowLevelContract", 1))
+            {
+                if (_fez == null)
+                    _fez = await FEZHAT.CreateAsync();
+                
+                message.Temperature = _fez.GetTemperature();
+                message.Brightness = _fez.GetLightLevel();
+            }
+        }
+
+        #endregion
+
+
+        #region Azure
+
+        public async void SendMessage(IrisMessage msg)
+        {
+
+            myQueueClient = new Queue(queueName, azureConnectionString);
+
+            // send
+            //Message m = new Message(msg);
+            var jsonMsg = JsonConvert.SerializeObject(msg);
+            // await myQueueClient.SendAsync(jsonMsg);
+
+            JsonObject jo = new JsonObject();
+
+            JsonObject.TryParse(jsonMsg, out jo);
+            // serialize
+            await myQueueClient.SendAsync(jo);
+
+        }
+
+        #endregion
     }
 }

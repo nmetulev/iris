@@ -3,6 +3,25 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -1543,9 +1562,36 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -3176,9 +3222,36 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -4781,9 +4854,36 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -6419,9 +6519,36 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -8024,9 +8151,36 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -9662,9 +9816,36 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
+      "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll": {}
+        }
+      },
+      "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+        "dependencies": {
+          "GHIElectronics.UWP.LowLevelDrivers": "[0.0.8, )"
+        },
+        "compile": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        },
+        "runtime": {
+          "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -11267,10 +11448,42 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "WindowsAzure.Messaging.Managed/0.1.7.9": {
+        "compile": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        },
+        "runtime": {
+          "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll": {}
+        }
       }
     }
   },
   "libraries": {
+    "GHIElectronics.UWP.LowLevelDrivers/0.0.8": {
+      "sha512": "FvVU154icITbJFcE9+4tWGOGy4yBxhoLpgrDsmaQYsm8nnjAVnJT3xVUBCiCJUfXFVKUsGT6XcbklCBNHnja6Q==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "content/Properties/GHIElectronics.UWP.LowLevelDrivers.rd.xml",
+        "GHIElectronics.UWP.LowLevelDrivers.nuspec",
+        "lib/.NETCore50/GHIElectronics.UWP.LowLevelDrivers.dll",
+        "package/services/metadata/core-properties/6fcc664515c2460295e4f881490d77d5.psmdcp"
+      ]
+    },
+    "GHIElectronics.UWP.Shields.FEZHAT/0.0.8": {
+      "sha512": "slzf4YHFp5gCgGhjLvyB/BLT/MBJKb1NqWz8mZCe5fYomAu5COJDQS4NO0wPSHcDFnfMAsmdSpnf1WlcaaMNig==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "content/Properties/GHIElectronics.UWP.Shields.FEZHAT.rd.xml",
+        "GHIElectronics.UWP.Shields.FEZHAT.nuspec",
+        "lib/.NETCore50/GHIElectronics.UWP.Shields.FEZHAT.dll",
+        "package/services/metadata/core-properties/fa7aee89d7f14cde98e8d46308b50778.psmdcp"
+      ]
+    },
     "Microsoft.CSharp/4.0.0": {
       "sha512": "/q7Wo1eEf1Nv2cuOO5h1F/MzEM0xn0MoV2kb1YpgDZFYZ/y5gkPYUA0Ws6mVADJKiMWnl2/RXb87roVhUy0QXA==",
       "type": "Package",
@@ -14641,11 +14854,29 @@
         "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll",
         "System.Xml.XmlSerializer.nuspec"
       ]
+    },
+    "WindowsAzure.Messaging.Managed/0.1.7.9": {
+      "sha512": "9g7MVL7Odl5qwG9TSsaab/MKFXdeLitrvbbRAO7xWk4CGeD1j17GPeUsuufO8VY5+GAcCQjJcrM6fU+y/eLCBg==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.dll",
+        "lib/netcore45/Microsoft.WindowsAzure.Messaging.Managed.pri",
+        "lib/windowsphone8/Microsoft.WindowsAzure.Messaging.dll",
+        "lib/wpa81/Microsoft.WindowsAzure.Messaging.Managed.dll",
+        "lib/wpa81/Microsoft.WindowsAzure.Messaging.Managed.pri",
+        "package/services/metadata/core-properties/569168c4f5e84989be94f8996f8e2485.psmdcp",
+        "WindowsAzure.Messaging.Managed.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0"
+      "GHIElectronics.UWP.Shields.FEZHAT >= 0.0.8",
+      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
+      "Newtonsoft.Json >= 8.0.1-beta3",
+      "WindowsAzure.Messaging.Managed >= 0.1.7.9"
     ],
     "UAP,Version=v10.0": []
   }

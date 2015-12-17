@@ -8,7 +8,6 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <CaptureElement Name="PreviewControl" Stretch="Uniform"/>
         <TextBlock Name="Status" ></TextBlock>
 
         <!--<StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20" RequestedTheme="Dark">

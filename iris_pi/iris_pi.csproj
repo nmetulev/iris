@@ -136,6 +136,10 @@
       <Project>{c38f5543-7ab4-4261-a992-f6174a3b2bd7}</Project>
       <Name>FaceSDK</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Iris_SampleApplication\DTOLib\DTOLib.csproj">
+      <Project>{964d3452-5b33-4e09-a9aa-750908aee197}</Project>
+      <Name>DTOLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
