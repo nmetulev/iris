@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionSDK", "EmotionSDK\Em
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceSDK", "FaceSDK\FaceSDK.csproj", "{C38F5543-7AB4-4261-A992-F6174A3B2BD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "door_pi", "door_pi\door_pi.csproj", "{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,26 @@ Global
 		{C38F5543-7AB4-4261-A992-F6174A3B2BD7}.Release|x64.Build.0 = Release|x64
 		{C38F5543-7AB4-4261-A992-F6174A3B2BD7}.Release|x86.ActiveCfg = Release|x86
 		{C38F5543-7AB4-4261-A992-F6174A3B2BD7}.Release|x86.Build.0 = Release|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|ARM.ActiveCfg = Debug|ARM
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|ARM.Build.0 = Debug|ARM
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|ARM.Deploy.0 = Debug|ARM
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|x64.ActiveCfg = Debug|x64
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|x64.Build.0 = Debug|x64
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|x64.Deploy.0 = Debug|x64
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|x86.ActiveCfg = Debug|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|x86.Build.0 = Debug|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Debug|x86.Deploy.0 = Debug|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|Any CPU.ActiveCfg = Release|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|ARM.ActiveCfg = Release|ARM
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|ARM.Build.0 = Release|ARM
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|ARM.Deploy.0 = Release|ARM
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|x64.ActiveCfg = Release|x64
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|x64.Build.0 = Release|x64
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|x64.Deploy.0 = Release|x64
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|x86.ActiveCfg = Release|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|x86.Build.0 = Release|x86
+		{CFB1C00D-FE4F-4E73-8C2C-DF57F9E0A300}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
