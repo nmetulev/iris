@@ -11,6 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App_Sender", "App_Sender\Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOLib", "DTOLib\DTOLib.csproj", "{964D3452-5B33-4E09-A9AA-750908AEE197}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B57C63EC-9AF9-4284-BA9C-E374227C03ED}"
+	ProjectSection(SolutionItems) = preProject
+		databasetable.sql = databasetable.sql
+		streamanalyticsQuery.txt = streamanalyticsQuery.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App_Receiver", "App_Receiver\App_Receiver.csproj", "{E581617F-25FD-451B-B2C6-877795475AA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +99,26 @@ Global
 		{964D3452-5B33-4E09-A9AA-750908AEE197}.Release|x64.Build.0 = Release|Any CPU
 		{964D3452-5B33-4E09-A9AA-750908AEE197}.Release|x86.ActiveCfg = Release|Any CPU
 		{964D3452-5B33-4E09-A9AA-750908AEE197}.Release|x86.Build.0 = Release|Any CPU
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|ARM.ActiveCfg = Debug|ARM
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|ARM.Build.0 = Debug|ARM
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|ARM.Deploy.0 = Debug|ARM
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|x64.ActiveCfg = Debug|x64
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|x64.Build.0 = Debug|x64
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|x64.Deploy.0 = Debug|x64
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|x86.ActiveCfg = Debug|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|x86.Build.0 = Debug|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Debug|x86.Deploy.0 = Debug|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|Any CPU.ActiveCfg = Release|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|ARM.ActiveCfg = Release|ARM
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|ARM.Build.0 = Release|ARM
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|ARM.Deploy.0 = Release|ARM
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|x64.ActiveCfg = Release|x64
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|x64.Build.0 = Release|x64
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|x64.Deploy.0 = Release|x64
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|x86.ActiveCfg = Release|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|x86.Build.0 = Release|x86
+		{E581617F-25FD-451B-B2C6-877795475AA9}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

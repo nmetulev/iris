@@ -35,12 +35,10 @@ namespace EventHub_Receiver
             foreach (EventData eventData in messages)
             {
                 string data = Encoding.UTF8.GetString(eventData.GetBytes());
-
-
                 
-
-                Console.WriteLine(string.Format("Message received.  Partition: '{0}', Data: '{1}'",
-                    context.Lease.PartitionId, data));
+                
+                Console.WriteLine(string.Format("Message received.  Partition: '{0}', Data: '{1}', PartitionKey: '{2}'",
+                    context.Lease.PartitionId, data, eventData.PartitionKey));
             }
 
             await context.CheckpointAsync();
