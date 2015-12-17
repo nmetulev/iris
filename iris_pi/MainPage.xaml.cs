@@ -115,10 +115,9 @@ namespace iris_pi
                     var frame = args.ResultFrame;
                     var box = frame.DetectedFaces.First().FaceBox;
 
-                    var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-                    var previewStream = previewProperties as VideoEncodingProperties;
 
-                    if (((double)box.Height / (double)previewStream.Height) < 0.3)
+
+                    if (((double)box.Height / (double)_previewStream.Height) < 0.3)
                     {
                         UpdateUI("Hi there!", "Come closer so I can look at you better", Colors.LightGray, Colors.Black);
                         //SetStatus("Come Closer");
@@ -126,9 +125,10 @@ namespace iris_pi
                     else
                     {
                         _faceDetected = true;
+
                         if (!_analyzing) TakePhotoAndAnalyzeAsync();
                     }
-                    
+
                     Debug.WriteLine("Face Detected: Height: " + box.Height + " Width: " + box.Width);
                     
                 }
@@ -139,8 +139,9 @@ namespace iris_pi
                 }
 
             }
-            else
+            else if (!_analyzing)
             {
+                
                 UpdateUI("Welcome!", "Do you have what it takes to enter?", Colors.Black, Colors.White);
                 _faceDetected = false;
             }
@@ -148,9 +149,10 @@ namespace iris_pi
 
         #endregion Event handlers
 
+        VideoEncodingProperties _previewStream;
 
         #region MediaCapture methods
-        
+
         private async Task InitializeCameraAsync()
         {
             Debug.WriteLine("InitializeCameraAsync");
@@ -178,8 +180,9 @@ namespace iris_pi
                     CaptureElement element = new CaptureElement();
                     element.Source = _mediaCapture;
                     await _mediaCapture.StartPreviewAsync();
-                    
-                    
+
+                    var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+                    _previewStream = previewProperties as VideoEncodingProperties;
 
                     var definition = new FaceDetectionEffectDefinition();
                     definition.SynchronousDetectionEnabled = false;
@@ -237,6 +240,8 @@ namespace iris_pi
                     UpdateUI("Intruder, Intruder!", "You do not belong here, shoo...", Colors.Red, Colors.White);
 
                 }
+
+                await Task.Delay(4000);
 
             }
             catch (Exception ex)
@@ -304,6 +309,7 @@ namespace iris_pi
                 Root.Background = new SolidColorBrush(backgroundColor);
                 MainText.Foreground = new SolidColorBrush(foregroundColor);
                 SubtitleText.Foreground = new SolidColorBrush(foregroundColor);
+                Debug.WriteLine(subttitleMessage);
             });
         }
         
@@ -463,7 +469,7 @@ namespace iris_pi
 
         private async Task InitFez()
         {
-            if (ApiInformation.IsTypePresent("Windows.Devices.Gpio"))
+            if (ApiInformation.IsTypePresent(typeof(Windows.Devices.Gpio.GpioController).ToString()))
             {
                 if (_fez == null)
                     _fez = await FEZHAT.CreateAsync();
@@ -481,29 +487,33 @@ namespace iris_pi
 
         private void BlinkLights(FEZHAT.Color color)
         {
-            if (_fez == null) return;
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            double time = 0;
-            bool red = false;
-            timer.Tick += (s, a) =>
+            var t = Root.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                time++;
-                if (time > 30)
-                {
-                    timer.Stop();
-                    _fez.D2.TurnOff();
-                    return;
-                }
+                if (_fez == null) return;
 
-                if (red)
-                    _fez.D2.Color = color;
-                else
-                red = !red;
-                
-            };
-            timer.Start();
+                timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromMilliseconds(100);
+                double time = 0;
+                bool red = false;
+                timer.Tick += (s, a) =>
+                {
+                    time++;
+                    if (time > 30)
+                    {
+                        timer.Stop();
+                        _fez.D2.TurnOff();
+                        return;
+                    }
+
+                    if (red)
+                        _fez.D2.Color = color;
+                    else
+                        red = !red;
+
+                };
+                timer.Start();
+            });
+            
         }
 
         private void SetLightsDenied()
