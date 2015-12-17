@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Devices.Gpio;
 using System.Diagnostics; // Contains Stopwatch 
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Messaging;
 
 
 // Die Vorlage "Leere Seite" ist unter http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 dokumentiert.
@@ -37,9 +38,16 @@ namespace door_pi
         private double currentDirection;
         private double PulseFrequency = 20;
         Stopwatch stopwatch;
+        private string connstring = "Endpoint=sb://pragirismessagequeue.servicebus.windows.net/;SharedAccessKeyName=all;SharedAccessKey=L9/vm+g45Zes4WvMUYEVan7X4mDOJaIPCNAiXQHb2KI=";
+        private string queueName = "pragirismessagequeueentity";
+       
+       
+
 
         public MainPage()
         {
+
+
             this.InitializeComponent();
             
         }
@@ -63,10 +71,19 @@ namespace door_pi
             stopwatch = Stopwatch.StartNew();
 
             currentDirection = 1; // Initially we aren't dancing at all.
-            
-
-
+           
             Debug.WriteLine("GPIO pin ready");
+
+            Queue myQueueClient = new Queue(queueName, connstring);
+            myQueueClient.OnMessage( async (message) =>
+            {
+                Debug.WriteLine("Opening door via Azure ;)");
+                OpenDoor();
+
+                await Task.Delay(5000);
+                CloseDoor();
+                Debug.WriteLine("Door has closed automatically");
+            });
 
             if (servoPin != null)
             {
@@ -80,9 +97,9 @@ namespace door_pi
 
                 //Set UI light off
                 //lightImg.Source = new BitmapImage(new Uri("ms-appx:/Images/Bombilla_roja_-_red_Edison_lamp.png", UriKind.Absolute));
-
-
             }
+
+            
         }
 
         private async void OpenDoor()
