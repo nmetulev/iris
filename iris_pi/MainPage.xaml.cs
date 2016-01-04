@@ -46,28 +46,12 @@ namespace iris_pi
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private readonly DisplayInformation _displayInformation = DisplayInformation.GetForCurrentView();
-        private readonly SimpleOrientationSensor _orientationSensor = SimpleOrientationSensor.GetDefault();
-        private SimpleOrientation _deviceOrientation = SimpleOrientation.NotRotated;
-        private DisplayOrientations _displayOrientation = DisplayOrientations.Portrait;
-
-        // Rotation metadata to apply to the preview stream and recorded videos (MF_MT_VIDEO_ROTATION)
-        // Reference: http://msdn.microsoft.com/en-us/library/windows/apps/xaml/hh868174.aspx
-        private static readonly Guid RotationKey = new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1");
-
-        // Prevent the screen from sleeping while the camera is running
-        private readonly DisplayRequest _displayRequest = new DisplayRequest();
-
         // MediaCapture and its state variables
         private MediaCapture _mediaCapture;
         private bool _isInitialized;
         private bool _isPreviewing;
 
         private FaceDetectionEffect _faceDetectionEffect;
-
-        // Information about the camera device
-        private bool _mirroringPreview;
-        private bool _externalCamera;
 
         private EmotionServiceClient _emotionClient;
         private FaceServiceClient _faceClient;
@@ -159,7 +143,6 @@ namespace iris_pi
 
             if (_mediaCapture == null)
             {
-                // Attempt to get the back camera if one is available, but use any camera device if not
                 var cameraDevice = await FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
 
                 if (cameraDevice == null)
